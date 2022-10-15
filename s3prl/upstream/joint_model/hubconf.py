@@ -1,4 +1,4 @@
-from s3prl.upstream.joint_model.expert import UpstreamExpert as _UpstreamExpert
+from .expert import UpstreamExpert as _UpstreamExpert
 
 
 def my_model(*args, **kwargs):
