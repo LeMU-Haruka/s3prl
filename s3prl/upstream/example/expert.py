@@ -1,9 +1,12 @@
-from collections import OrderedDict
 from typing import List, Union, Dict
 
+import torch
 import torch.nn as nn
 from torch import Tensor
 from torch.nn.utils.rnn import pad_sequence
+
+from s3prl.upstream.example.model_config import load_config
+from s3prl.upstream.example.model_module import JointModel
 
 HIDDEN_DIM = 8
 
@@ -22,7 +25,7 @@ class UpstreamExpert(nn.Module):
                 Can be assigned by the -g option in run_downstream.py
         """
         super().__init__()
-        self.name = "[Example UpstreamExpert]"
+        self.name = "joint_model"
 
         print(
             f"{self.name} - You can use model_config to construct your customized model: {model_config}"
@@ -32,10 +35,13 @@ class UpstreamExpert(nn.Module):
             f"{self.name} - If you store the pretrained weights and model config in a single file, "
             "you can just choose one argument (ckpt or model_config) to pass. It's up to you!"
         )
-
+        model_config = load_config()
+        param = torch.load(ckpt)
+        self.model = JointModel(model_config)
+        self.model.encoder.load_state_dict(param)
         # The model needs to be a nn.Module for finetuning, not required for representation extraction
-        self.model1 = nn.Linear(1, HIDDEN_DIM)
-        self.model2 = nn.Linear(HIDDEN_DIM, HIDDEN_DIM)
+        # self.model1 = nn.Linear(1, HIDDEN_DIM)
+        # self.model2 = nn.Linear(HIDDEN_DIM, HIDDEN_DIM)
 
     def get_downsample_rates(self, key: str) -> int:
         """
@@ -49,29 +55,10 @@ class UpstreamExpert(nn.Module):
         When the returning Dict contains the List with more than one Tensor,
         those Tensors should be in the same shape to train a weighted-sum on them.
         """
+        hiddens = self.model.encode(wavs)
 
-        wavs = pad_sequence(wavs, batch_first=True).unsqueeze(-1)
-        # wavs: (batch_size, max_len, 1)
-
-        hidden = self.model1(wavs)
-        # hidden: (batch_size, max_len, hidden_dim)
-
-        feature = self.model2(hidden)
-        # feature: (batch_size, max_len, hidden_dim)
-
-        # The "hidden_states" key will be used as default in many cases
-        # Others keys in this example are presented for SUPERB Challenge
+        padded_feats = pad_sequence(hiddens, batch_first=True)
         return {
-            "hidden_states": [hidden, feature],
-            "PR": [hidden, feature],
-            "ASR": [hidden, feature],
-            "QbE": [hidden, feature],
-            "SID": [hidden, feature],
-            "ASV": [hidden, feature],
-            "SD": [hidden, feature],
-            "ER": [hidden, feature],
-            "SF": [hidden, feature],
-            "SE": [hidden, feature],
-            "SS": [hidden, feature],
-            "secret": [hidden, feature],
+            "last_hidden_state": padded_feats,
+            "hidden_states": [padded_feats],
         }

@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from typing import List, Union, Dict
 
 import torch
@@ -6,8 +5,8 @@ import torch.nn as nn
 from torch import Tensor
 from torch.nn.utils.rnn import pad_sequence
 
-from .model_config import load_config
-from .model_module import JointModel
+from s3prl.upstream.example.model_config import load_config
+from s3prl.upstream.example.model_module import JointModel
 
 HIDDEN_DIM = 8
 
