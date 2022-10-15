@@ -6,6 +6,7 @@ import torch.nn as nn
 from torch import Tensor
 from torch.nn.utils.rnn import pad_sequence
 
+from s3prl.upstream.joint_model.model_config import load_config
 from s3prl.upstream.joint_model.model_module import JointModel, FeatureFusionModel
 
 HIDDEN_DIM = 8
@@ -35,7 +36,7 @@ class UpstreamExpert(nn.Module):
             f"{self.name} - If you store the pretrained weights and model config in a single file, "
             "you can just choose one argument (ckpt or model_config) to pass. It's up to you!"
         )
-
+        model_config = load_config()
         param = torch.load(ckpt)
         self.model = JointModel(model_config)
         self.model.encoder.load_state_dict(param)
