@@ -64,7 +64,7 @@ class FeatureFusionModel(nn.Module):
         return features, audio_len
 
     def encode_audio(self, audio):
-        audio_feat = [self.audio_encoder(val).last_hidden_state.squeeze() for val in audio]
+        audio_feat = [self.audio_encoder(val.unsqueeze(1).transpose(0, 1)).last_hidden_state.squeeze() for val in audio]
         features = pad_sequence(audio_feat).transpose(0, 1)
         features = self.fusion(features)
         return features
