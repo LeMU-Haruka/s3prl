@@ -6,8 +6,8 @@ import torch.nn as nn
 from torch import Tensor
 from torch.nn.utils.rnn import pad_sequence
 
-from s3prl.upstream.joint_model.model_config import load_config
-from s3prl.upstream.joint_model.model_module import JointModel, FeatureFusionModel
+from .model_config import load_config
+from .model_module import JointModel
 
 HIDDEN_DIM = 8
 

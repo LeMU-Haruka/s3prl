@@ -8,7 +8,7 @@ from torch.nn import CrossEntropyLoss
 from torch.nn.utils.rnn import pad_sequence
 from transformers import Wav2Vec2Model
 
-from s3prl.upstream.joint_model.transformer import CrossTransformer
+from .transformer import CrossTransformer
 
 
 class MaxPool(nn.Module):

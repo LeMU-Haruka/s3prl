@@ -2,8 +2,6 @@ from typing import Optional, Union, Tuple
 
 import torch
 import torch.nn as nn
-import numpy as np
-from torch.nn import CrossEntropyLoss
 from transformers.activations import ACT2FN
 from transformers.modeling_outputs import BaseModelOutput
 
