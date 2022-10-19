@@ -35,10 +35,10 @@ class UpstreamExpert(nn.Module):
             f"{self.name} - If you store the pretrained weights and model config in a single file, "
             "you can just choose one argument (ckpt or model_config) to pass. It's up to you!"
         )
-        print(
-            f"{self.name} - Finetuen wav2vec2 is {self.is_finetune_wav2vec}"
-        )
         self.model_config = load_config()
+        print(
+            f"{self.name} - Finetune wav2vec2 is {self.model_config.is_finetune_wav2vec}"
+        )
         param = torch.load(ckpt)
         self.model = JointModel(self.model_config)
         self.model.encoder.load_state_dict(param)
@@ -51,14 +51,14 @@ class UpstreamExpert(nn.Module):
         Since we do not do any downsampling in this example upstream
         All keys' corresponding representations have downsample rate of 1
         """
-        return 1
+        return 320
 
     def forward(self, wavs: List[Tensor]) -> Dict[str, Union[Tensor, List[Tensor]]]:
         """
         When the returning Dict contains the List with more than one Tensor,
         those Tensors should be in the same shape to train a weighted-sum on them.
         """
-        hiddens = self.model.encode(wavs)
+        hiddens = self.model(wavs)
 
         padded_feats = pad_sequence(hiddens, batch_first=True)
         return {

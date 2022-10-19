@@ -3,6 +3,7 @@ from transformers import BartConfig
 
 def load_config():
     config = BartConfig()
+    config.is_finetune=True
     config.num_hidden_layers = 6
     config.hidden_size = 768
     config.encoder_ffn_dim = 2048
@@ -10,7 +11,8 @@ def load_config():
     config.pad_index = 103
     config.word_pred = 0.15
     config.is_train_wav2vec=False
-    config.is_finetune_wav2vec=False
+    config.is_finetune = True
+    config.is_finetune_wav2vec=True
     config.batch_size = 4
     config.real_batch_size = 16
     config.output_path='./output/'

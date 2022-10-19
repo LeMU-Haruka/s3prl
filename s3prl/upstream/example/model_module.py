@@ -81,12 +81,10 @@ class JointModel(nn.Module):
         super(JointModel, self).__init__()
         self.config = config
         self.encoder = FeatureFusionModel(config)
-        self.prediction = PredictionModel(config)
 
-    def forward(self, audio, text_feat, label, mask_index):
-        x, audio_len = self.encoder(audio, text_feat)
-        loss = self.prediction(x, audio_len, mask_index, label)
-        return loss
+    def forward(self, audio):
+        x = self.encoder.encode_audio(audio)
+        return x
 
     def encode(self, input):
         features = self.encoder.encode_audio(input)
