@@ -3,7 +3,6 @@ from transformers import BartConfig
 
 def load_config():
     config = BartConfig()
-    config.is_finetune=True
     config.num_hidden_layers = 6
     config.hidden_size = 768
     config.encoder_ffn_dim = 2048
