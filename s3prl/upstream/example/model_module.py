@@ -42,7 +42,7 @@ class FeatureFusionModel(nn.Module):
     def __init__(self, config):
         super(FeatureFusionModel, self).__init__()
         self.config = config
-        self.audio_encoder = Wav2Vec2Model.from_pretrained('F:\OneDrive\Code\Python\\audio_pretrain\pretrain_models\wav2vec2-base-960h')
+        self.audio_encoder = Wav2Vec2Model.from_pretrained(config.wav2vec_dir)
         self.fusion = CrossTransformer(config)
 
     def forward(self, audio, text):
@@ -64,7 +64,12 @@ class FeatureFusionModel(nn.Module):
         return features, audio_len
 
     def encode_audio(self, audio):
-        audio_feat = [self.audio_encoder(val.unsqueeze(1).transpose(0, 1)).last_hidden_state.squeeze() for val in audio]
+        if self.config.is_finetune_wav2vec:
+            audio_feat = [self.audio_encoder(val.unsqueeze(1).transpose(0, 1)).last_hidden_state.squeeze() for val in audio]
+        else:
+            with torch.no_grad():
+                audio_feat = [self.audio_encoder(val.unsqueeze(1).transpose(0, 1)).last_hidden_state.squeeze() for val
+                              in audio]
         features = pad_sequence(audio_feat).transpose(0, 1)
         features = self.fusion(features)
         return features

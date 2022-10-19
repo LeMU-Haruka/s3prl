@@ -10,8 +10,10 @@ def load_config():
     config.pad_index = 103
     config.word_pred = 0.15
     config.is_train_wav2vec=False
+    config.is_finetune_wav2vec=False
     config.batch_size = 4
     config.real_batch_size = 16
     config.output_path='./output/'
-    config.wav2vec_dir='./pretrain_models/wav2vec2-base-960h'
+    # config.wav2vec_dir='./pretrain_models/wav2vec2-base-960h'
+    config.wav2vec_dir='F:\OneDrive\Code\Python\\audio_pretrain\pretrain_models\wav2vec2-base-960h'
     return config
